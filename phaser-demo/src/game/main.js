@@ -16,6 +16,7 @@ var rest_frame = 1;
 var movespeed = 150;
 var goal_x;
 var goal_y;
+var cropRect;
 
 var state = {
 
@@ -45,6 +46,9 @@ var state = {
     },
     create: function(){
 
+        //crop rectangle
+        cropRect = new Phaser.Rectangle(7,16,18,20);
+
         //world
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.add.sprite(0,0,'sky');
@@ -59,12 +63,14 @@ var state = {
         ledge.body.immovable = true;
 
         //player
-        player = game.add.sprite(32, game.world.height - 150, 'dude');
+        player = game.add.sprite(12, game.world.height - 150, 'dude');
+        player.crop(cropRect);
         player.scale.setTo(2,2);
         game.physics.arcade.enable(player);
         player.body.bounce.y = 0.2;
         //player.body.gravity.y = 300;
         player.body.collideWorldBounds = true;
+        
 
         player.animations.add('left', [4,5], 10, true);
         player.animations.add('right', [7,8], 10, true);
@@ -89,6 +95,7 @@ var state = {
             star.body.bounce.y = 0.7 + Math.random() * 0.2;
         }
 
+
      // score
      scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
      score = 0;
@@ -97,6 +104,7 @@ var state = {
 
 
     update: function() {
+        player.updateCrop();
         
         game.physics.arcade.collide(player, platforms);
         game.physics.arcade.collide(stars, platforms);
@@ -105,8 +113,8 @@ var state = {
 
         if (game.input.mousePointer.isDown)
         {
-            goal_x = game.input.x-24;
-            goal_y = game.input.y-48;
+            goal_x = game.input.x-20;
+            goal_y = game.input.y-32;
 
         }
         score = player.x;
