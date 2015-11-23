@@ -99,6 +99,8 @@ var state = {
 
         player.animations.add('left', [4,5], 10, true);
         player.animations.add('right', [7,8], 10, true);
+        player.animations.add('upright',[11, 10], 10, true);
+        player.animations.add('upleft',[9, 10], 10, true);
 
 
         //stars
@@ -129,17 +131,19 @@ var state = {
 
 
     update: function() {
+
+        //update crop to fix chicken sprite
         player.updateCrop();
         
+        //update collisions
         game.physics.arcade.collide(player, platforms);
         game.physics.arcade.collide(stars, platforms);
 
-        player.body.velocity.x = 0;
 
         if (game.input.mousePointer.isDown)
         {
             goal_x = game.input.x-20;
-            goal_y = game.input.y-32;
+            goal_y = game.input.y-20;
 
         }
         score = player.x;
@@ -150,7 +154,31 @@ var state = {
 
         if (movespeed > 15)
         {
-            if (goal_x < player.x)
+            
+            if ( Phaser.Math.difference(goal_y, player.y) > Phaser.Math.difference(goal_x, player.x)) 
+            {
+                if (goal_x < player.x)
+                {
+                    player.animations.play('upleft');
+                    rest_frame = 10;
+                }
+
+                else
+                    {
+                        player.animations.play('upright');
+                        rest_frame = 10;
+                    }
+
+            }
+            /*
+            else if Phaser.Math.difference(goal_y, player.y) > Phaser.Math.difference(goal_x, player.x) && goal_x > player.x)
+            {
+                player.animations.play('up right');
+                rest_frame = 11;
+            }
+            */
+
+            else if (goal_x < player.x)
             {
 
                 player.animations.play('left');
