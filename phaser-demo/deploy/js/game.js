@@ -39,6 +39,8 @@ var scoreText;
 var stars;
 var rest_frame = 1;
 var movespeed = 150;
+var goal_x;
+var goal_y;
 
 var state = {
 
@@ -114,16 +116,10 @@ var state = {
 
      // score
      scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-
-
-    },
-
-    collectStar: function(player, star) {
-        star.kill();
-        score += 1000;
-        scoreText.text = 'Score: ' + score;
+     score = 0;
 
     },
+
 
     update: function() {
         
@@ -132,40 +128,36 @@ var state = {
 
         player.body.velocity.x = 0;
 
-        if (cursors.left.isDown && !cursors.up.isDown)
+        if (game.input.mousePointer.isDown)
         {
-            player.body.velocity.x = -1*movespeed;
-            player.animations.play('left');
-            rest_frame = 2;
+            goal_x = game.input.x-24;
+            goal_y = game.input.y-48;
+
+        }
+        score = player.x;
+        var error_distance = Phaser.Math.distance(player.x,player.y,goal_x,goal_y);
+        scoreText.text = 'X: ' + score;
+        movespeed = Phaser.Math.min(4*error_distance,200);
+        game.physics.arcade.moveToXY(player,goal_x,goal_y,movespeed);
+
+        if (movespeed > 15)
+        {
+            if (goal_x < player.x)
+            {
+
+                player.animations.play('left');
+                rest_frame = 2;
+
+            }
+
+            else
+            {
+                player.animations.play('right');
+                rest_frame = 0;
+            }
+
         }
 
-        else if (cursors.right.isDown && !cursors.up.isDown)
-        {
-            player.body.velocity.x = movespeed;
-            player.animations.play('right');
-            rest_frame = 0;
-        }
-
-        else if (cursors.up.isDown && !cursors.left.isDown && !cursors.right.isDown)
-        {
-            player.body.velocity.y = movespeed;
-        }
-
-        else if (cursors.right.isDown && cursors.up.isDown)
-        {
-            player.body.velocity.x = movespeed;
-            player.body.velocity.y = -1*movespeed;
-            player.frame = 11;
-            rest_frame = 10;
-        }
-
-        else if (cursors.left.isDown && cursors.up.isDown)
-        {
-            player.body.velocity.x = -1*movespeed;
-            player.body.velocity.y = -1*movespeed;
-            player.frame = 9;
-            rest_frame = 10;
-        }
 
         else 
         {
@@ -173,10 +165,6 @@ var state = {
             player.frame = rest_frame;
         }
 
-        if (cursors.up.isDown && player.body.touching.down)
-        {
-            player.body.velocity.y = -350;
-        }
     }
 };
 
