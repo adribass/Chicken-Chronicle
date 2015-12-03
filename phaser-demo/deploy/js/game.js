@@ -75,6 +75,7 @@ var state = {
         cropRect = new Phaser.Rectangle(7,16,18,20);
 
         //world
+        game.world.setBounds(0,0,1200,600);
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.add.sprite(0,0,'sky');
         platforms = game.add.group();
@@ -95,6 +96,7 @@ var state = {
         player.body.bounce.y = 0.2;
         //player.body.gravity.y = 300;
         player.body.collideWorldBounds = true;
+        game.camera.follow(player);
         
 
         player.animations.add('left', [4,5], 10, true);
@@ -142,8 +144,8 @@ var state = {
 
         if (game.input.mousePointer.isDown)
         {
-            goal_x = game.input.x-20;
-            goal_y = game.input.y-20;
+            goal_x = game.input.x-20 + game.camera.x;
+            goal_y = game.input.y-20 + game.camera.y;
 
         }
         score = player.x;
